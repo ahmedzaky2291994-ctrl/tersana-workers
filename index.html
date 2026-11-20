@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بصمة العمال - ترسانة جنوب البحر الأحمر</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; background-color: #f4f4f9; }
+        .box { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); max-width: 400px; margin: auto; }
+        input[type="text"] { width: 90%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; }
+        video, img { width: 180px; height: 180px; object-fit: cover; border-radius: 50%; border: 3px solid #007bff; margin: 10px auto; display: block; background: #222; }
+        button { padding: 12px; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; margin: 5px; font-weight: bold; }
+        button:disabled { background-color: #999 !important; cursor: not-allowed; }
+        .btn-cam { width: 90%; background-color: #007bff; margin-bottom: 10px; }
+        .btn-in { width: 43%; background-color: #28a745; }
+        .btn-out { width: 43%; background-color: #dc3545; }
+        #result { margin-top: 15px; font-weight: bold; color: #333; line-height: 1.6; }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h3>بصمة حضور وانصراف العمال</h3>
+    <input type="text" id="workerName" placeholder="اكتب اسم العامل ثلاثي...">
+    
+    <video id="video" autoplay playsinline muted></video>
+    <img id="preview" style="display:none;" alt="صورة العامل">
+    
+    <button class="btn-cam" id="camBtn" onclick="handleCamera()">📸 تشغيل الكاميرا</button>
+    <br>
+    <button class="btn-in" id="btnIn" onclick="recordAttendance('حضور')">تسجيل حضور</button>
+    <button class="btn-out" id="btnOut" onclick="recordAttendance('انصراف')">تسجيل انصراف</button>
+    <div id="result"></div>
+</div>
+
+<script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbya6to5WDi4p8U76uDse7nSA8FVR9MhijKmqu_c8KqAHMjaOo9rhChlKRutI_F6YkEr5g/exec";
+    const WORK_LAT = 26.684146; 
+    const WORK_LON = 33.933166;
+    const MAX_DISTANCE = 250; // تم التعديل إلى 250 متر حول الترسانة
+    
+    let capturedImage = null;
+    let cameraStarted = false;
+
+    function handleCamera() {
+        const video = document.getElementById('video');
+        const btn = document.getElementById('camBtn');
+        const preview = document.getElementById('preview');
+
+        if (!cameraStarted) {
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false })
+                .then(stream => {
+                    video.srcObject = stream;
+                    video.play();
+                    cameraStarted = true;
+                    preview.style.display = 'none';
+                    video.style.display = 'block';
+                    btn.innerHTML = "📷 اضغط الآن لالتقاط الصورة";
+                    btn.style.backgroundColor = "#ff9800";
+                })
+                .catch(err => {
+                    document.getElementById('result').innerHTML = "⚠️ تأكد من تفعيل إذن الكاميرا للمتصفح من إعدادات الهاتف.";
+                });
+        } else {
+            const canvas = document.createElement('canvas');
+            canvas.width = 300;
+            canvas.height = 300;
+            canvas.getContext('2d').drawImage(video, 0, 0, 300, 300);
+            capturedImage = canvas.toDataURL('image/jpeg', 0.7);
+            
+            preview.src = capturedImage;
+            preview.style.display = 'block';
+            video.style.display = 'none';
+            
+            video.srcObject.getTracks().forEach(track => track.stop());
+            cameraStarted = false;
+            btn.innerHTML = "🔄 إعادة التقاط الصورة";
+            btn.style.backgroundColor = "#007bff";
+            document.getElementById('result').innerHTML = "✅ تم التقاط الصورة، اضغط حضور أو انصراف.";
+        }
+    }
+
+    function getDistance(lat1, lon1, lat2, lon2) {
+        const R = 6371e3;
+        const p1 = lat1 * Math.PI / 180, p2 = lat2 * Math.PI / 180;
+        const dp = (lat2 - lat1) * Math.PI / 180, dl = (lon2 - lon1) * Math.PI / 180;
+        const a = Math.sin(dp/2) * Math.sin(dp/2) + Math.cos(p1) * Math.cos(p2) * Math.sin(dl/2) * Math.sin(dl/2);
+        return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+    }
+
+    function toggleButtons(disabled) {
+        document.getElementById('btnIn').disabled = disabled;
+        document.getElementById('btnOut').disabled = disabled;
+    }
+
+    function recordAttendance(type) {
+        const name = document.getElementById('workerName').value.trim();
+        const resultDiv = document.getElementById('result');
+
+        if (name.split(" ").length < 3) { 
+            resultDiv.innerHTML = "⚠️ من فضلك اكتب اسمك ثلاثياً على الأقل!"; 
+            return; 
+        }
+        if (!capturedImage) { 
+            resultDiv.innerHTML = "⚠️ يجب التقاط صورة سيلفي أولاً!"; 
+            return; 
+        }
+
+        toggleButtons(true);
+        resultDiv.innerHTML = "⏳ جاري التحقق من الموقع ورفع الصورة...";
+
+        navigator.geolocation.getCurrentPosition(
+            function(position) {
+                const distance = Math.round(getDistance(WORK_LAT, WORK_LON, position.coords.latitude, position.coords.longitude));
+                const time = new Date().toLocaleString('ar-EG');
+
+                if (distance <= MAX_DISTANCE) {
+                    fetch(SCRIPT_URL, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        body: JSON.stringify({ name: name, type: type, time: time, distance: distance, image: capturedImage })
+                    }).then(() => {
+                        resultDiv.innerHTML = `✅ تم تسجيل <b>${type}</b> بنجاح لـ: ${name}<br>📍 المسافة: ${distance} متر<br>🕒 ${time}`;
+                        capturedImage = null; // تصفير الصورة لمنع التكرار
+                        document.getElementById('preview').style.display = 'none';
+                        document.getElementById('video').style.display = 'block';
+                        document.getElementById('camBtn').innerHTML = "📸 تشغيل الكاميرا";
+                        toggleButtons(false);
+                    }).catch(() => {
+                        resultDiv.innerHTML = "❌ حدث خطأ في الاتصال بالإنترنت، حاول مرة أخرى.";
+                        toggleButtons(false);
+                    });
+                } else {
+                    resultDiv.innerHTML = `❌ <b>مرفوض!</b> أنت خارج موقع الترسانة (${distance} متر).`;
+                    toggleButtons(false);
+                }
+            },
+            function() { 
+                resultDiv.innerHTML = "❌ تعذر تحديد الموقع. تأكد من تفعيل GPS ومنح الإذن للمتصفح."; 
+                toggleButtons(false);
+            },
+            { enableHighAccuracy: true, timeout: 10000 }
+        );
+    }
+</script>
+
+</body>
+</html>
