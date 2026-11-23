@@ -5,70 +5,66 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>بصمة العمال - ترسانة جنوب البحر الأحمر</title>
     <style>
-        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        * { box-sizing: border-box; font-family: Arial, sans-serif; }
         body { margin: 0; background-color: #f4f6f9; color: #333; padding-bottom: 75px; }
         
-        /* الهيدر العلوي وبيانات العامل */
         .header-card {
             background: #ffffff;
-            padding: 18px 20px;
+            padding: 16px 18px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.04);
-            border-bottom-left-radius: 20px;
-            border-bottom-right-radius: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-bottom-left-radius: 18px;
+            border-bottom-right-radius: 18px;
         }
-        .user-info { display: flex; align-items: center; gap: 14px; }
+        .user-info { display: flex; align-items: center; gap: 12px; }
         .avatar {
-            width: 52px; height: 52px;
+            width: 48px; height: 48px;
             background-color: #10b981;
-            color: white; font-size: 22px; font-weight: bold;
+            color: white; font-size: 20px; font-weight: bold;
             border-radius: 50%; display: flex; align-items: center; justify-content: center;
         }
-        .user-details h3 { margin: 0; font-size: 17px; color: #1f2937; }
-        .user-details p { margin: 3px 0 0; font-size: 13px; color: #6b7280; }
+        .user-details h3 { margin: 0; font-size: 16px; color: #1f2937; }
+        .user-details p { margin: 3px 0 0; font-size: 12px; color: #6b7280; }
         .edit-btn {
-            background: #f3f4f6; border: none; width: 40px; height: 40px;
-            border-radius: 50%; cursor: pointer; font-size: 18px; color: #4b5563;
+            background: #f3f4f6; border: none; width: 38px; height: 38px;
+            border-radius: 50%; cursor: pointer; font-size: 16px;
         }
 
-        /* شريط التقويم الأسبوعي */
         .calendar-card {
-            background: #ffffff; margin: 15px; padding: 15px;
-            border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            background: #ffffff; margin: 12px 15px; padding: 14px;
+            border-radius: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         }
-        .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-weight: bold; color: #374151; font-size: 15px; }
+        .cal-header { display: flex; justify-content: space-between; margin-bottom: 10px; font-weight: bold; color: #374151; font-size: 14px; }
         .week-days { display: flex; justify-content: space-between; text-align: center; }
-        .day-box { padding: 8px 10px; border-radius: 12px; font-size: 14px; color: #6b7280; flex: 1; }
-        .day-box.active { background-color: #2563eb; color: white; font-weight: bold; box-shadow: 0 4px 10px rgba(37,99,235,0.3); }
-        .day-dot { width: 5px; height: 5px; background: #2563eb; border-radius: 50%; margin: 4px auto 0; }
+        .day-box { padding: 7px 8px; border-radius: 10px; font-size: 13px; color: #6b7280; flex: 1; }
+        .day-box.active { background-color: #2563eb; color: white; font-weight: bold; }
+        .day-dot { width: 4px; height: 4px; background: #2563eb; border-radius: 50%; margin: 3px auto 0; }
         .day-box.active .day-dot { background: white; }
 
-        /* بطاقة الشيفت والعداد */
         .shift-card {
-            background: #ffffff; margin: 15px; padding: 20px;
-            border-radius: 18px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            background: #ffffff; margin: 12px 15px; padding: 18px;
+            border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             text-align: center;
         }
-        .shift-title { font-size: 15px; font-weight: bold; color: #1f2937; margin-bottom: 18px; }
+        .shift-title { font-size: 14px; font-weight: bold; color: #1f2937; margin-bottom: 15px; }
         
-        .timer-container { display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 15px; direction: ltr; }
+        .timer-container { display: flex; justify-content: center; align-items: center; gap: 8px; margin-bottom: 12px; direction: ltr; }
         .time-box {
             background: #f8fafc; border: 1px solid #e2e8f0;
-            padding: 10px 14px; border-radius: 10px;
-            font-size: 20px; font-weight: bold; color: #1e293b; min-width: 55px;
+            padding: 8px 12px; border-radius: 8px;
+            font-size: 18px; font-weight: bold; color: #1e293b; min-width: 48px;
         }
-        .hrs-label { font-size: 13px; color: #64748b; font-weight: bold; }
+        .hrs-label { font-size: 12px; color: #64748b; font-weight: bold; }
 
-        .progress-bar { width: 100%; height: 6px; background: #e2e8f0; border-radius: 10px; overflow: hidden; margin-bottom: 18px; }
+        .progress-bar { width: 100%; height: 6px; background: #e2e8f0; border-radius: 10px; overflow: hidden; margin-bottom: 15px; }
         .progress-fill { height: 100%; width: 0%; background: #2563eb; transition: width 0.5s; }
 
-        .meta-info { text-align: right; font-size: 13px; color: #6b7280; margin-bottom: 18px; display: flex; flex-direction: column; gap: 8px; padding-right: 10px; }
-        .meta-item { display: flex; align-items: center; gap: 8px; }
+        .meta-info { text-align: right; font-size: 13px; color: #6b7280; margin-bottom: 15px; display: flex; flex-direction: column; gap: 6px; }
+        .meta-item { display: flex; align-items: center; gap: 6px; }
 
-        /* الكاميرا المدمجة */
-        .camera-section { margin: 15px 0; }
+        .camera-section { margin: 12px 0; }
         video, img#preview {
             width: 140px; height: 140px; object-fit: cover;
             border-radius: 50%; border: 3px solid #2563eb;
@@ -76,72 +72,66 @@
         }
         .cam-trigger {
             background: #eff6ff; color: #2563eb; border: 1px dashed #2563eb;
-            padding: 10px 16px; border-radius: 10px; font-size: 14px; font-weight: bold;
+            padding: 11px; border-radius: 10px; font-size: 14px; font-weight: bold;
             cursor: pointer; width: 100%; margin-bottom: 10px;
         }
 
-        /* زر الحضور والانصراف */
+        .btn-row { display: flex; gap: 10px; }
         .action-btn {
-            width: 100%; padding: 14px; border: none; border-radius: 12px;
-            font-size: 16px; font-weight: bold; cursor: pointer;
-            transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;
+            flex: 1; padding: 13px; border: none; border-radius: 10px;
+            font-size: 15px; font-weight: bold; cursor: pointer;
         }
         .btn-signin { background-color: #dcfce7; color: #166534; }
         .btn-signout { background-color: #fee2e2; color: #991b1b; }
-        .action-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        #statusMsg { margin-top: 12px; font-size: 13px; font-weight: bold; line-height: 1.5; }
+        #statusMsg { margin-top: 12px; font-size: 13px; font-weight: bold; line-height: 1.5; color: #1f2937; }
 
-        /* نافذة تعديل بيانات العامل */
         .modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.6); z-index: 9999; align-items: center; justify-content: center;
         }
         .modal-content {
-            background: white; padding: 22px; border-radius: 16px; width: 90%; max-width: 360px; text-align: right;
+            background: white; padding: 20px; border-radius: 14px; width: 88%; max-width: 350px; text-align: right;
         }
-        .modal-content h4 { margin-top: 0; color: #1f2937; }
+        .modal-content h4 { margin: 0 0 12px; color: #1f2937; }
         .modal-content input {
-            width: 100%; padding: 11px; margin: 8px 0 14px; border: 1px solid #d1d5db;
+            width: 100%; padding: 10px; margin: 5px 0 12px; border: 1px solid #ccc;
             border-radius: 8px; font-size: 14px;
         }
-        .save-btn { width: 100%; background: #2563eb; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .save-btn { width: 100%; background: #2563eb; color: white; border: none; padding: 11px; border-radius: 8px; font-weight: bold; font-size: 15px; }
 
-        /* الشريط السفلي */
         .bottom-nav {
             position: fixed; bottom: 0; left: 0; width: 100%; background: white;
-            display: flex; justify-content: space-around; padding: 10px 0;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.05); border-top: 1px solid #f1f5f9;
+            display: flex; justify-content: space-around; padding: 8px 0;
+            box-shadow: 0 -2px 8px rgba(0,0,0,0.06); border-top: 1px solid #eee;
         }
-        .nav-item { text-align: center; font-size: 11px; color: #64748b; text-decoration: none; }
+        .nav-item { text-align: center; font-size: 11px; color: #64748b; cursor: pointer; flex: 1; }
         .nav-item.active { color: #2563eb; font-weight: bold; }
-        .nav-icon { font-size: 18px; display: block; margin-bottom: 2px; }
+        .nav-icon { font-size: 17px; display: block; margin-bottom: 2px; }
     </style>
 </head>
 <body>
 
-<!-- بطاقة بيانات العامل -->
-<div class="header-card">
+<div class="header-card" onclick="openModal()">
     <div class="user-info">
         <div class="avatar" id="avatarLetter">؟</div>
         <div class="user-details">
-            <h3 id="displayName">اضغط لتسجيل بياناتك</h3>
+            <h3 id="displayName">اضغط هنا لكتابة اسمك</h3>
             <p id="displayJob">المهنة • القسم</p>
         </div>
     </div>
-    <button class="edit-btn" onclick="openModal()" title="تعديل البيانات">⚙️</button>
+    <button type="button" class="edit-btn">⚙️</button>
 </div>
 
-<!-- شريط التقويم -->
 <div class="calendar-card">
     <div class="cal-header">
-        <span id="monthYearText">November 2026</span>
-        <span id="dayNameText">(Monday)</span>
+        <span id="monthYearText"></span>
+        <span id="dayNameText"></span>
     </div>
     <div class="week-days" id="weekDaysContainer"></div>
 </div>
 
-<!-- بطاقة الشيفت والبصمة -->
 <div class="shift-card">
     <div class="shift-title">شيفت صباحي (6:00 صباحاً - 3:00 مساءً) + (أوفر)</div>
     
@@ -157,67 +147,80 @@
     </div>
 
     <div class="meta-info">
-        <div class="meta-item">🕒 <span id="checkInTimeText">لم يتم تسجيل الحضور بعد</span></div>
+        <div class="meta-item">🕒 <span id="checkInTimeText">جاهز لتسجيل الحضور</span></div>
         <div class="meta-item">📍 <span>Zone 1 - ترسانة جنوب البحر الأحمر</span></div>
     </div>
 
     <div class="camera-section">
         <video id="video" autoplay playsinline muted></video>
         <img id="preview" alt="صورة العامل">
-        <button class="cam-trigger" id="camBtn" onclick="handleCamera()">📸 تشغيل الكاميرا لالتقاط السيلفي</button>
+        <button type="button" class="cam-trigger" id="camBtn" onclick="handleCamera()">📸 تشغيل الكاميرا لالتقاط السيلفي</button>
     </div>
 
-    <button class="action-btn btn-signin" id="mainActionBtn" onclick="processAttendance()">
-        <span>↪️</span> <span id="actionBtnText">تسجيل حضور (Sign In)</span>
-    </button>
+    <div class="btn-row">
+        <button type="button" class="action-btn btn-signin" id="btnIn" onclick="recordAttendance('حضور')">تسجيل حضور</button>
+        <button type="button" class="action-btn btn-signout" id="btnOut" onclick="recordAttendance('انصراف')">تسجيل انصراف</button>
+    </div>
 
     <div id="statusMsg"></div>
 </div>
 
-<!-- نافذة إدخال بيانات العامل -->
 <div class="modal" id="profileModal">
     <div class="modal-content">
-        <h4>بيانات العامل (تُحفظ تلقائياً)</h4>
+        <h4>بيانات العامل</h4>
         <label>الاسم ثلاثي:</label>
-        <input type="text" id="inputName" placeholder="مثال: أحمد زكي علي">
+        <input type="text" id="inputName" placeholder="اكتب اسمك ثلاثي...">
         <label>المهنة / التخصص:</label>
         <input type="text" id="inputJob" placeholder="مثال: لحام CO2">
         <label>القسم:</label>
         <input type="text" id="inputDept" placeholder="مثال: قسم بناء السفن">
-        <button class="save-btn" onclick="saveProfile()">حفظ البيانات</button>
+        <button type="button" class="save-btn" onclick="saveProfile()">حفظ البيانات</button>
     </div>
 </div>
 
-<!-- الشريط السفلي -->
 <div class="bottom-nav">
     <div class="nav-item active"><span class="nav-icon">👤</span>Schedule</div>
-    <div class="nav-item" onclick="alert('سيتم ربط إحصائيات الشهر في التحديث القادم')"><span class="nav-icon">📊</span>Dashboard</div>
-    <div class="nav-item" onclick="openModal()"><span class="nav-icon">⚙️</span>بياناتي</div>
+    <div class="nav-item" onclick="openModal()"><span class="nav-icon">⚙️</span>تعديل بياناتي</div>
 </div>
 
 <script>
-    const SCRIPT_URL = "https://google.com";
-    const WORK_LAT = 26.684146; 
-    const WORK_LON = 33.933166;
-    const MAX_DISTANCE = 250;
+    var SCRIPT_URL = "https://google.com";
+    var WORK_LAT = 26.684146; 
+    var WORK_LON = 33.933166;
+    var MAX_DISTANCE = 250;
 
-    let capturedImage = null;
-    let cameraStarted = false;
-    let timerInterval = null;
+    var capturedImage = null;
+    var cameraStarted = false;
+    var timerInterval = null;
 
-    // تهيئة الصفحة عند الفتح
-    window.onload = function() {
-        setupCalendar();
-        loadProfile();
-        restoreShiftState();
-    };
+    var savedName = "";
+    var savedJob = "";
+    var savedDept = "";
 
-    // ضبط التقويم الأسبوعي
-    function setupCalendar() {
-        const now = new Date();
-        const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-        const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+    function safeGet(key) {
+        try { return localStorage.getItem(key); } catch(e) { return null; }
+    }
+    function safeSet(key, val) {
+        try { localStorage.setItem(key, val); } catch(e) {}
+    }
+
+    function initApp() {
+        var now = new Date();
+        var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+        var days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
         
-        document.getElementById('monthYearText').innerText = `${months[now.getMonth()]} ${now.getFullYear()}`;
-        document.getElementById('dayNameText').innerText = `(${days[now.getDay()]})`;
+        document.getElementById('monthYearText').innerText = months[now.getMonth()] + " " + now.getFullYear();
+        document.getElementById('dayNameText').innerText = "(" + days[now.getDay()] + ")";
 
+        var container = document.getElementById('weekDaysContainer');
+        var html = "";
+        for (var i = -3; i <= 3; i++) {
+            var d = new Date();
+            d.setDate(now.getDate() + i);
+            var cls = (i === 0) ? "day-box active" : "day-box";
+            html += '<div class="' + cls + '">' + d.getDate() + '<div class="day-dot"></div></div>';
+        }
+        container.innerHTML = html;
+
+        savedName = safeGet('worker_name') || "";
+        savedJob = safeGet('worker_job') || "";
