@@ -1,228 +1,171 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بصمة العمال - ترسانة جنوب البحر الأحمر</title>
-    <style>
-        * { box-sizing: border-box; font-family: Arial, sans-serif; }
-        body { margin: 0; background-color: #f4f6f9; color: #333; padding-bottom: 75px; }
-        
-        .header-card {
-            background: #ffffff;
-            padding: 16px 18px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            border-bottom-left-radius: 18px;
-            border-bottom-right-radius: 18px;
-        }
-        .user-info { display: flex; align-items: center; gap: 12px; }
-        .avatar {
-            width: 48px; height: 48px;
-            background-color: #10b981;
-            color: white; font-size: 20px; font-weight: bold;
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-        }
-        .user-details h3 { margin: 0; font-size: 16px; color: #1f2937; }
-        .user-details p { margin: 3px 0 0; font-size: 12px; color: #6b7280; }
-        .edit-btn {
-            background: #f3f4f6; border: none; width: 38px; height: 38px;
-            border-radius: 50%; cursor: pointer; font-size: 16px;
-        }
-
-        .calendar-card {
-            background: #ffffff; margin: 12px 15px; padding: 14px;
-            border-radius: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-        }
-        .cal-header { display: flex; justify-content: space-between; margin-bottom: 10px; font-weight: bold; color: #374151; font-size: 14px; }
-        .week-days { display: flex; justify-content: space-between; text-align: center; }
-        .day-box { padding: 7px 8px; border-radius: 10px; font-size: 13px; color: #6b7280; flex: 1; }
-        .day-box.active { background-color: #2563eb; color: white; font-weight: bold; }
-        .day-dot { width: 4px; height: 4px; background: #2563eb; border-radius: 50%; margin: 3px auto 0; }
-        .day-box.active .day-dot { background: white; }
-
-        .shift-card {
-            background: #ffffff; margin: 12px 15px; padding: 18px;
-            border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            text-align: center;
-        }
-        .shift-title { font-size: 14px; font-weight: bold; color: #1f2937; margin-bottom: 15px; }
-        
-        .timer-container { display: flex; justify-content: center; align-items: center; gap: 8px; margin-bottom: 12px; direction: ltr; }
-        .time-box {
-            background: #f8fafc; border: 1px solid #e2e8f0;
-            padding: 8px 12px; border-radius: 8px;
-            font-size: 18px; font-weight: bold; color: #1e293b; min-width: 48px;
-        }
-        .hrs-label { font-size: 12px; color: #64748b; font-weight: bold; }
-
-        .progress-bar { width: 100%; height: 6px; background: #e2e8f0; border-radius: 10px; overflow: hidden; margin-bottom: 15px; }
-        .progress-fill { height: 100%; width: 0%; background: #2563eb; transition: width 0.5s; }
-
-        .meta-info { text-align: right; font-size: 13px; color: #6b7280; margin-bottom: 15px; display: flex; flex-direction: column; gap: 6px; }
-        .meta-item { display: flex; align-items: center; gap: 6px; }
-
-        .camera-section { margin: 12px 0; }
-        video, img#preview {
-            width: 140px; height: 140px; object-fit: cover;
-            border-radius: 50%; border: 3px solid #2563eb;
-            margin: 0 auto 10px; display: none; background: #111;
-        }
-        .cam-trigger {
-            background: #eff6ff; color: #2563eb; border: 1px dashed #2563eb;
-            padding: 11px; border-radius: 10px; font-size: 14px; font-weight: bold;
-            cursor: pointer; width: 100%; margin-bottom: 10px;
-        }
-
-        .btn-row { display: flex; gap: 10px; }
-        .action-btn {
-            flex: 1; padding: 13px; border: none; border-radius: 10px;
-            font-size: 15px; font-weight: bold; cursor: pointer;
-        }
-        .btn-signin { background-color: #dcfce7; color: #166534; }
-        .btn-signout { background-color: #fee2e2; color: #991b1b; }
-        .action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        #statusMsg { margin-top: 12px; font-size: 13px; font-weight: bold; line-height: 1.5; color: #1f2937; }
-
-        .modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6); z-index: 9999; align-items: center; justify-content: center;
-        }
-        .modal-content {
-            background: white; padding: 20px; border-radius: 14px; width: 88%; max-width: 350px; text-align: right;
-        }
-        .modal-content h4 { margin: 0 0 12px; color: #1f2937; }
-        .modal-content input {
-            width: 100%; padding: 10px; margin: 5px 0 12px; border: 1px solid #ccc;
-            border-radius: 8px; font-size: 14px;
-        }
-        .save-btn { width: 100%; background: #2563eb; color: white; border: none; padding: 11px; border-radius: 8px; font-weight: bold; font-size: 15px; }
-
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 0; width: 100%; background: white;
-            display: flex; justify-content: space-around; padding: 8px 0;
-            box-shadow: 0 -2px 8px rgba(0,0,0,0.06); border-top: 1px solid #eee;
-        }
-        .nav-item { text-align: center; font-size: 11px; color: #64748b; cursor: pointer; flex: 1; }
-        .nav-item.active { color: #2563eb; font-weight: bold; }
-        .nav-icon { font-size: 17px; display: block; margin-bottom: 2px; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>بصمة العمال - ترسانة جنوب البحر الأحمر</title>
+<style>
+*{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f4f6f9;color:#333;padding-bottom:70px}
+.header{background:#fff;padding:15px 18px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,.05);border-radius:0 0 18px 18px;cursor:pointer}
+.u-info{display:flex;align-items:center;gap:12px}
+.avatar{width:46px;height:46px;background:#10b981;color:#fff;font-size:20px;font-weight:bold;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.u-det h3{margin:0;font-size:16px;color:#1f2937}
+.u-det p{margin:3px 0 0;font-size:12px;color:#6b7280}
+.edit-btn{background:#f3f4f6;border:none;width:36px;height:36px;border-radius:50%;font-size:16px}
+.cal{background:#fff;margin:12px 15px;padding:14px;border-radius:15px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.cal-h{display:flex;justify-content:space-between;margin-bottom:10px;font-weight:bold;color:#374151;font-size:14px}
+.w-days{display:flex;justify-content:space-between;text-align:center}
+.d-box{padding:6px;border-radius:10px;font-size:13px;color:#6b7280;flex:1}
+.d-box.active{background:#2563eb;color:#fff;font-weight:bold}
+.card{background:#fff;margin:12px 15px;padding:18px;border-radius:16px;box-shadow:0 4px 12px rgba(0,0,0,.05);text-align:center}
+.s-title{font-size:14px;font-weight:bold;color:#1f2937;margin-bottom:14px}
+.timer{display:flex;justify-content:center;align-items:center;gap:8px;margin-bottom:12px;direction:ltr}
+.t-box{background:#f8fafc;border:1px solid #e2e8f0;padding:8px 12px;border-radius:8px;font-size:18px;font-weight:bold;color:#1e293b;min-width:48px}
+.p-bar{width:100%;height:6px;background:#e2e8f0;border-radius:10px;overflow:hidden;margin-bottom:14px}
+.p-fill{height:100%;width:0%;background:#2563eb;transition:width .5s}
+.meta{text-align:right;font-size:13px;color:#6b7280;margin-bottom:14px;line-height:1.8}
+video,img#preview{width:140px;height:140px;object-fit:cover;border-radius:50%;border:3px solid #2563eb;margin:0 auto 10px;display:none;background:#111}
+.cam-btn{background:#eff6ff;color:#2563eb;border:1px dashed #2563eb;padding:11px;border-radius:10px;font-size:14px;font-weight:bold;cursor:pointer;width:100%;margin-bottom:10px}
+.row{display:flex;gap:10px}
+.btn{flex:1;padding:13px;border:none;border-radius:10px;font-size:15px;font-weight:bold;cursor:pointer}
+.btn-in{background:#dcfce7;color:#166534}
+.btn-out{background:#fee2e2;color:#991b1b}
+.btn:disabled{opacity:.5}
+#msg{margin-top:12px;font-size:13px;font-weight:bold;line-height:1.5}
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.65);z-index:9999;align-items:center;justify-content:center}
+.m-box{background:#fff;padding:20px;border-radius:14px;width:88%;max-width:350px;text-align:right}
+.m-box input{width:100%;padding:10px;margin:5px 0 12px;border:1px solid #ccc;border-radius:8px;font-size:14px}
+.s-btn{width:100%;background:#2563eb;color:#fff;border:none;padding:12px;border-radius:8px;font-weight:bold;font-size:15px}
+.nav{position:fixed;bottom:0;left:0;width:100%;background:#fff;display:flex;padding:8px 0;border-top:1px solid #eee;z-index:999}
+.n-item{text-align:center;font-size:11px;color:#64748b;cursor:pointer;flex:1}
+.n-item.active{color:#2563eb;font-weight:bold}
+</style>
 </head>
 <body>
 
-<div class="header-card" onclick="openModal()">
-    <div class="user-info">
-        <div class="avatar" id="avatarLetter">؟</div>
-        <div class="user-details">
-            <h3 id="displayName">اضغط هنا لكتابة اسمك</h3>
-            <p id="displayJob">المهنة • القسم</p>
-        </div>
-    </div>
-    <button type="button" class="edit-btn">⚙️</button>
+<div class="header" onclick="openM()">
+  <div class="u-info">
+    <div class="avatar" id="av">؟</div>
+    <div class="u-det"><h3 id="dName">اضغط هنا لكتابة اسمك</h3><p id="dJob">المهنة • القسم</p></div>
+  </div>
+  <button type="button" class="edit-btn">⚙️</button>
 </div>
 
-<div class="calendar-card">
-    <div class="cal-header">
-        <span id="monthYearText"></span>
-        <span id="dayNameText"></span>
-    </div>
-    <div class="week-days" id="weekDaysContainer"></div>
+<div class="cal">
+  <div class="cal-h"><span id="mTxt"></span><span id="dTxt"></span></div>
+  <div class="w-days" id="wDays"></div>
 </div>
 
-<div class="shift-card">
-    <div class="shift-title">شيفت صباحي (6:00 صباحاً - 3:00 مساءً) + (أوفر)</div>
-    
-    <div class="timer-container">
-        <div class="time-box" id="timerHrs">00</div>
-        <div class="time-box" id="timerMins">00</div>
-        <div class="time-box" id="timerSecs">00</div>
-        <span class="hrs-label">HRS</span>
-    </div>
-
-    <div class="progress-bar">
-        <div class="progress-fill" id="progressFill"></div>
-    </div>
-
-    <div class="meta-info">
-        <div class="meta-item">🕒 <span id="checkInTimeText">جاهز لتسجيل الحضور</span></div>
-        <div class="meta-item">📍 <span>Zone 1 - ترسانة جنوب البحر الأحمر</span></div>
-    </div>
-
-    <div class="camera-section">
-        <video id="video" autoplay playsinline muted></video>
-        <img id="preview" alt="صورة العامل">
-        <button type="button" class="cam-trigger" id="camBtn" onclick="handleCamera()">📸 تشغيل الكاميرا لالتقاط السيلفي</button>
-    </div>
-
-    <div class="btn-row">
-        <button type="button" class="action-btn btn-signin" id="btnIn" onclick="recordAttendance('حضور')">تسجيل حضور</button>
-        <button type="button" class="action-btn btn-signout" id="btnOut" onclick="recordAttendance('انصراف')">تسجيل انصراف</button>
-    </div>
-
-    <div id="statusMsg"></div>
+<div class="card">
+  <div class="s-title">شيفت صباحي (6:00 صباحاً - 3:00 مساءً) + (أوفر)</div>
+  <div class="timer">
+    <div class="t-box" id="tH">00</div><div class="t-box" id="tM">00</div><div class="t-box" id="tS">00</div><b>HRS</b>
+  </div>
+  <div class="p-bar"><div class="p-fill" id="pFill"></div></div>
+  <div class="meta">
+    <div>🕒 <span id="inTxt">جاهز لتسجيل الحضور</span></div>
+    <div>📍 Zone 1 - ترسانة جنوب البحر الأحمر</div>
+  </div>
+  <video id="video" autoplay playsinline muted></video>
+  <img id="preview" alt="صورة">
+  <button type="button" class="cam-btn" id="camBtn" onclick="cam()">📸 تشغيل الكاميرا لالتقاط السيلفي</button>
+  <div class="row">
+    <button type="button" class="btn btn-in" id="bIn" onclick="send('حضور')">تسجيل حضور</button>
+    <button type="button" class="btn btn-out" id="bOut" onclick="send('انصراف')">تسجيل انصراف</button>
+  </div>
+  <div id="msg"></div>
 </div>
 
-<div class="modal" id="profileModal">
-    <div class="modal-content">
-        <h4>بيانات العامل</h4>
-        <label>الاسم ثلاثي:</label>
-        <input type="text" id="inputName" placeholder="اكتب اسمك ثلاثي...">
-        <label>المهنة / التخصص:</label>
-        <input type="text" id="inputJob" placeholder="مثال: لحام CO2">
-        <label>القسم:</label>
-        <input type="text" id="inputDept" placeholder="مثال: قسم بناء السفن">
-        <button type="button" class="save-btn" onclick="saveProfile()">حفظ البيانات</button>
-    </div>
+<div class="modal" id="modal">
+  <div class="m-box">
+    <h4 style="margin-top:0">بيانات العامل</h4>
+    <input type="text" id="iName" placeholder="الاسم ثلاثي...">
+    <input type="text" id="iJob" placeholder="المهنة (مثال: لحام CO2)">
+    <input type="text" id="iDept" placeholder="القسم (مثال: بناء السفن)">
+    <button type="button" class="s-btn" onclick="saveP()">حفظ البيانات</button>
+  </div>
 </div>
 
-<div class="bottom-nav">
-    <div class="nav-item active"><span class="nav-icon">👤</span>Schedule</div>
-    <div class="nav-item" onclick="openModal()"><span class="nav-icon">⚙️</span>تعديل بياناتي</div>
+<div class="nav">
+  <div class="n-item active">👤<br>Schedule</div>
+  <div class="n-item" onclick="logs()">📊<br>سجل بصماتي</div>
+  <div class="n-item" onclick="openM()">⚙️<br>بياناتي</div>
 </div>
 
 <script>
-    var SCRIPT_URL = "https://google.com";
-    var WORK_LAT = 26.684146; 
-    var WORK_LON = 33.933166;
-    var MAX_DISTANCE = 250;
+var URL="https://google.com";
+var LAT=26.684146,LON=33.933166,MAX=250,img=null,camOn=false,tmr=null,sName="",sJob="",sDept="";
 
-    var capturedImage = null;
-    var cameraStarted = false;
-    var timerInterval = null;
+function g(k){try{return localStorage.getItem(k)}catch(e){return null}}
+function s(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+function norm(t){return t.trim().replace(/[أإآ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي').replace(/\s+/g,' ')}
 
-    var savedName = "";
-    var savedJob = "";
-    var savedDept = "";
+function init(){
+  var n=new Date(),ms=["January","February","March","April","May","June","July","August","September","October","November","December"],ds=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+  document.getElementById('mTxt').innerText=ms[n.getMonth()]+" "+n.getFullYear();
+  document.getElementById('dTxt').innerText="("+ds[n.getDay()]+")";
+  var h="";
+  for(var i=-3;i<=3;i++){var d=new Date();d.setDate(n.getDate()+i);h+='<div class="d-box'+(i===0?' active':'')+'">'+d.getDate()+'</div>'}
+  document.getElementById('wDays').innerHTML=h;
+  sName=g('wn')||"";sJob=g('wj')||"";sDept=g('wd')||"";
+  if(sName)upd();else openM();
+}
 
-    function safeGet(key) {
-        try { return localStorage.getItem(key); } catch(e) { return null; }
-    }
-    function safeSet(key, val) {
-        try { localStorage.setItem(key, val); } catch(e) {}
-    }
+function upd(){
+  document.getElementById('dName').innerText=sName;
+  document.getElementById('dJob').innerText=(sJob||"فني")+" • "+(sDept||"ترسانة سفاجا");
+  document.getElementById('av').innerText=sName.charAt(0);
+}
+function openM(){document.getElementById('iName').value=sName;document.getElementById('iJob').value=sJob;document.getElementById('iDept').value=sDept;document.getElementById('modal').style.display='flex'}
+function saveP(){
+  var n=norm(document.getElementById('iName').value),j=document.getElementById('iJob').value.trim(),d=document.getElementById('iDept').value.trim();
+  if(n.split(" ").length<3){alert("اكتب الاسم ثلاثياً");return}
+  sName=n;sJob=j;sDept=d;s('wn',n);s('wj',j);s('wd',d);
+  document.getElementById('modal').style.display='none';upd();
+}
+function logs(){alert("آخر بصماتك:\n\n"+(g('ml')||"لا يوجد"))}
 
-    function initApp() {
-        var now = new Date();
-        var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-        var days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
-        
-        document.getElementById('monthYearText').innerText = months[now.getMonth()] + " " + now.getFullYear();
-        document.getElementById('dayNameText').innerText = "(" + days[now.getDay()] + ")";
+function cam(){
+  var v=document.getElementById('video'),b=document.getElementById('camBtn'),p=document.getElementById('preview');
+  if(!camOn){
+    navigator.mediaDevices.getUserMedia({video:{facingMode:"user"},audio:false}).then(function(st){
+      v.srcObject=st;v.play();camOn=true;p.style.display='none';v.style.display='block';b.innerText="📷 اضغط لالتقاط الصورة";
+    }).catch(function(){document.getElementById('msg').innerText="⚠️ فعّل إذن الكاميرا"});
+  }else{
+    var c=document.createElement('canvas');c.width=300;c.height=300;c.getContext('2d').drawImage(v,0,0,300,300);
+    img=c.toDataURL('image/jpeg',0.7);p.src=img;p.style.display='block';v.style.display='none';
+    v.srcObject.getTracks().forEach(function(t){t.stop()});camOn=false;b.innerText="🔄 إعادة التقاط الصورة";
+    document.getElementById('msg').innerText="✅ الصورة جاهزة";
+  }
+}
 
-        var container = document.getElementById('weekDaysContainer');
-        var html = "";
-        for (var i = -3; i <= 3; i++) {
-            var d = new Date();
-            d.setDate(now.getDate() + i);
-            var cls = (i === 0) ? "day-box active" : "day-box";
-            html += '<div class="' + cls + '">' + d.getDate() + '<div class="day-dot"></div></div>';
-        }
-        container.innerHTML = html;
-        </html>
+function dist(a1,o1,a2,o2){
+  var R=6371e3,p1=a1*Math.PI/180,p2=a2*Math.PI/180,dp=(a2-a1)*Math.PI/180,dl=(o2-o1)*Math.PI/180;
+  var a=Math.sin(dp/2)*Math.sin(dp/2)+Math.cos(p1)*Math.cos(p2)*Math.sin(dl/2)*Math.sin(dl/2);
+  return R*(2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a)));
+}
 
-        savedName = safeGet('worker_name') || "";
-        savedJob = safeGet('worker_job') || "";
-
+function send(type){
+  var m=document.getElementById('msg'),b1=document.getElementById('bIn'),b2=document.getElementById('bOut');
+  if(!sName){openM();return}
+  if(!img){m.innerText="⚠️ التقط صورة سيلفي أولاً";return}
+  b1.disabled=b2.disabled=true;m.innerText="⏳ جاري التحقق من الموقع...";
+  var lbl=sJob?sName+" ("+sJob+")":sName;
+  navigator.geolocation.getCurrentPosition(function(pos){
+    var d=Math.round(dist(LAT,LON,pos.coords.latitude,pos.coords.longitude)),t=new Date().toLocaleString('ar-EG');
+    if(d<=MAX){
+      fetch(URL,{method:'POST',mode:'no-cors',body:JSON.stringify({name:lbl,type:type,time:t,distance:d,image:img})}).then(function(){
+        m.innerHTML="✅ تم تسجيل <b>"+type+"</b> ("+d+" متر)";
+        s('ml',type+" - "+t+"\n"+(g('ml')||""));
+        img=null;document.getElementById('preview').style.display='none';document.getElementById('camBtn').innerText="📸 تشغيل الكاميرا";
+        if(type==='حضور'){
+          clearInterval(tmr);var st=Date.now();document.getElementById('inTxt').innerText="الحضور: "+new Date().toLocaleTimeString('ar-EG');
+          tmr=setInterval(function(){
+            var df=Math.floor((Date.now()-st)/1000);
+            document.getElementById('tH').innerText=String(Math.floor(df/3600)).padStart(2,'0');
+            document.getElementById('tM').innerText=String(Math.floor((df%3600)/60)).padStart(2,'0');
+            document.getElementById('tS').innerText=String(df%60).padStart(2,'0');
+              </script>
+</body>
+</html>
