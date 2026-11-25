@@ -94,7 +94,7 @@ video,img#preview{width:140px;height:140px;object-fit:cover;border-radius:50%;bo
 </div>
 
 <script>
-var URL="https://google.com";
+var API_URL="https://script.google.com/macros/s/AKfycbya6to5WDi4p8U76uDse7nSA8FVR9MhijKmqu_c8KqAHMjaOo9rhChlKRutI_F6YkEr5g/exec";
 var LAT=26.684146,LON=33.933166,MAX=250,img=null,camOn=false,tmr=null,sName="",sJob="",sDept="";
 
 function g(k){try{return localStorage.getItem(k)}catch(e){return null}}
@@ -155,7 +155,7 @@ function send(type){
   navigator.geolocation.getCurrentPosition(function(pos){
     var d=Math.round(dist(LAT,LON,pos.coords.latitude,pos.coords.longitude)),t=new Date().toLocaleString('ar-EG');
     if(d<=MAX){
-      fetch(URL,{method:'POST',mode:'no-cors',body:JSON.stringify({name:lbl,type:type,time:t,distance:d,image:img})}).then(function(){
+      fetch(API_URL,{method:'POST',mode:'no-cors',body:JSON.stringify({name:lbl,type:type,time:t,distance:d,image:img})}).then(function(){
         m.innerHTML="✅ تم تسجيل <b>"+type+"</b> ("+d+" متر)";
         s('ml',type+" - "+t+"\n"+(g('ml')||""));
         img=null;document.getElementById('preview').style.display='none';document.getElementById('camBtn').innerText="📸 تشغيل الكاميرا";
@@ -166,6 +166,25 @@ function send(type){
             document.getElementById('tH').innerText=String(Math.floor(df/3600)).padStart(2,'0');
             document.getElementById('tM').innerText=String(Math.floor((df%3600)/60)).padStart(2,'0');
             document.getElementById('tS').innerText=String(df%60).padStart(2,'0');
-              </script>
+            document.getElementById('pFill').style.width=Math.min(df/32400*100,100)+'%';
+          },1000);
+        }
+        b1.disabled=b2.disabled=false;
+      }).catch(function(){
+        m.innerText="❌ فشل الإرسال، جرّب تاني";
+        b1.disabled=b2.disabled=false;
+      });
+    }else{
+      m.innerText="❌ أنت بعيد عن موقع الشغل ("+d+" متر)";
+      b1.disabled=b2.disabled=false;
+    }
+  },function(){
+    m.innerText="⚠️ فعّل إذن الموقع";
+    b1.disabled=b2.disabled=false;
+  },{enableHighAccuracy:true,timeout:15000});
+}
+
+init();
+</script>
 </body>
 </html>
