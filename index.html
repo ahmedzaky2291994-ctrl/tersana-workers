@@ -83,6 +83,8 @@ video,img#preview{width:140px;height:140px;object-fit:cover;border-radius:50%;bo
     <input type="text" id="iName" placeholder="الاسم ثلاثي...">
     <input type="text" id="iJob" placeholder="المهنة (مثال: لحام CO2)">
     <input type="text" id="iDept" placeholder="القسم (مثال: بناء السفن)">
+    <input type="text" id="iId" placeholder="رقم العامل">
+    <input type="password" id="iPin" placeholder="الرقم السري (4 أرقام)" inputmode="numeric" maxlength="4">
     <button type="button" class="s-btn" onclick="saveP()">حفظ البيانات</button>
   </div>
 </div>
@@ -95,7 +97,7 @@ video,img#preview{width:140px;height:140px;object-fit:cover;border-radius:50%;bo
 
 <script>
 var API_URL="https://script.google.com/macros/s/AKfycbya6to5WDi4p8U76uDse7nSA8FVR9MhijKmqu_c8KqAHMjaOo9rhChlKRutI_F6YkEr5g/exec";
-var LAT=26.684146,LON=33.933166,MAX=250,img=null,camOn=false,tmr=null,sName="",sJob="",sDept="";
+var LAT=26.684146,LON=33.933166,MAX=250,img=null,camOn=false,tmr=null,sName="",sJob="",sDept="",sId="",sPin="";
 
 function g(k){try{return localStorage.getItem(k)}catch(e){return null}}
 function s(k,v){try{localStorage.setItem(k,v)}catch(e){}}
@@ -108,7 +110,7 @@ function init(){
   var h="";
   for(var i=-3;i<=3;i++){var d=new Date();d.setDate(n.getDate()+i);h+='<div class="d-box'+(i===0?' active':'')+'">'+d.getDate()+'</div>'}
   document.getElementById('wDays').innerHTML=h;
-  sName=g('wn')||"";sJob=g('wj')||"";sDept=g('wd')||"";
+  sName=g('wn')||"";sJob=g('wj')||"";sDept=g('wd')||"";sId=g('wi')||"";sPin=g('wp')||"";
   if(sName)upd();else openM();
 }
 
@@ -117,11 +119,14 @@ function upd(){
   document.getElementById('dJob').innerText=(sJob||"فني")+" • "+(sDept||"ترسانة سفاجا");
   document.getElementById('av').innerText=sName.charAt(0);
 }
-function openM(){document.getElementById('iName').value=sName;document.getElementById('iJob').value=sJob;document.getElementById('iDept').value=sDept;document.getElementById('modal').style.display='flex'}
+function openM(){document.getElementById('iName').value=sName;document.getElementById('iJob').value=sJob;document.getElementById('iDept').value=sDept;document.getElementById('iId').value=sId;document.getElementById('iPin').value=sPin;document.getElementById('modal').style.display='flex'}
 function saveP(){
   var n=norm(document.getElementById('iName').value),j=document.getElementById('iJob').value.trim(),d=document.getElementById('iDept').value.trim();
+  var id=document.getElementById('iId').value.trim(),pin=document.getElementById('iPin').value.trim();
   if(n.split(" ").length<3){alert("اكتب الاسم ثلاثياً");return}
-  sName=n;sJob=j;sDept=d;s('wn',n);s('wj',j);s('wd',d);
+  if(!id){alert("اكتب رقم العامل");return}
+  if(!/^\d{4}$/.test(pin)){alert("الرقم السري 4 أرقام");return}
+  sName=n;sJob=j;sDept=d;sId=id;sPin=pin;s('wn',n);s('wj',j);s('wd',d);s('wi',id);s('wp',pin);
   document.getElementById('modal').style.display='none';upd();
 }
 function logs(){alert("آخر بصماتك:\n\n"+(g('ml')||"لا يوجد"))}
@@ -148,14 +153,14 @@ function dist(a1,o1,a2,o2){
 
 function send(type){
   var m=document.getElementById('msg'),b1=document.getElementById('bIn'),b2=document.getElementById('bOut');
-  if(!sName){openM();return}
+  if(!sName||!sId||!sPin){openM();return}
   if(!img){m.innerText="⚠️ التقط صورة سيلفي أولاً";return}
   b1.disabled=b2.disabled=true;m.innerText="⏳ جاري التحقق من الموقع...";
   var lbl=sJob?sName+" ("+sJob+")":sName;
   navigator.geolocation.getCurrentPosition(function(pos){
     var d=Math.round(dist(LAT,LON,pos.coords.latitude,pos.coords.longitude)),t=new Date().toLocaleString('ar-EG');
     if(d<=MAX){
-      fetch(API_URL,{method:'POST',mode:'no-cors',body:JSON.stringify({name:lbl,type:type,time:t,distance:d,image:img})}).then(function(){
+      fetch(API_URL,{method:'POST',mode:'no-cors',body:JSON.stringify({workerId:sId,pin:sPin,name:lbl,type:type,time:t,distance:d,image:img})}).then(function(){
         m.innerHTML="✅ تم تسجيل <b>"+type+"</b> ("+d+" متر)";
         s('ml',type+" - "+t+"\n"+(g('ml')||""));
         img=null;document.getElementById('preview').style.display='none';document.getElementById('camBtn').innerText="📸 تشغيل الكاميرا";
