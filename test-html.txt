@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نسخة تجربة - بصمة العمال - ترسانة جنوب البحر الأحمر</title>
+<style>
+*{box-sizing:border-box;font-family:Arial,sans-serif}
+body{margin:0;background:#f4f6f9;color:#333;padding-bottom:70px}
+.header{background:#fff;padding:15px 18px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,.05);border-radius:0 0 18px 18px;cursor:pointer}
+.u-info{display:flex;align-items:center;gap:12px}
+.avatar{width:46px;height:46px;background:#10b981;color:#fff;font-size:20px;font-weight:bold;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.u-det h3{margin:0;font-size:16px;color:#1f2937}
+.u-det p{margin:3px 0 0;font-size:12px;color:#6b7280}
+.edit-btn{background:#f3f4f6;border:none;width:36px;height:36px;border-radius:50%;font-size:16px}
+.cal{background:#fff;margin:12px 15px;padding:14px;border-radius:15px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.cal-h{display:flex;justify-content:space-between;margin-bottom:10px;font-weight:bold;color:#374151;font-size:14px}
+.w-days{display:flex;justify-content:space-between;text-align:center}
+.d-box{padding:6px;border-radius:10px;font-size:13px;color:#6b7280;flex:1}
+.d-box.active{background:#2563eb;color:#fff;font-weight:bold}
+.card{background:#fff;margin:12px 15px;padding:18px;border-radius:16px;box-shadow:0 4px 12px rgba(0,0,0,.05);text-align:center}
+.s-title{font-size:14px;font-weight:bold;color:#1f2937;margin-bottom:14px}
+.timer{display:flex;justify-content:center;align-items:center;gap:8px;margin-bottom:12px;direction:ltr}
+.t-box{background:#f8fafc;border:1px solid #e2e8f0;padding:8px 12px;border-radius:8px;font-size:18px;font-weight:bold;color:#1e293b;min-width:48px}
+.p-bar{width:100%;height:6px;background:#e2e8f0;border-radius:10px;overflow:hidden;margin-bottom:14px}
+.p-fill{height:100%;width:0%;background:#2563eb;transition:width .5s}
+.meta{text-align:right;font-size:13px;color:#6b7280;margin-bottom:14px;line-height:1.8}
+video,img#preview{width:140px;height:140px;object-fit:cover;border-radius:50%;border:3px solid #2563eb;margin:0 auto 10px;display:none;background:#111}
+.cam-btn{background:#eff6ff;color:#2563eb;border:1px dashed #2563eb;padding:11px;border-radius:10px;font-size:14px;font-weight:bold;cursor:pointer;width:100%;margin-bottom:10px}
+.row{display:flex;gap:10px}
+.btn{flex:1;padding:13px;border:none;border-radius:10px;font-size:15px;font-weight:bold;cursor:pointer}
+.btn-in{background:#dcfce7;color:#166534}
+.btn-out{background:#fee2e2;color:#991b1b}
+.btn:disabled{opacity:.5}
+#msg{margin-top:12px;font-size:13px;font-weight:bold;line-height:1.5}
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.65);z-index:9999;align-items:center;justify-content:center}
+.m-box{background:#fff;padding:20px;border-radius:14px;width:88%;max-width:350px;text-align:right}
+.m-box input{width:100%;padding:10px;margin:5px 0 12px;border:1px solid #ccc;border-radius:8px;font-size:14px}
+.s-btn{width:100%;background:#2563eb;color:#fff;border:none;padding:12px;border-radius:8px;font-weight:bold;font-size:15px}
+.nav{position:fixed;bottom:0;left:0;width:100%;background:#fff;display:flex;padding:8px 0;border-top:1px solid #eee;z-index:999}
+.n-item{text-align:center;font-size:11px;color:#64748b;cursor:pointer;flex:1}
+.n-item.active{color:#2563eb;font-weight:bold}
+</style>
+</head>
+<body>
+
+<div class="header" onclick="openM()">
+  <div class="u-info">
+    <div class="avatar" id="av">؟</div>
+    <div class="u-det"><h3 id="dName">اضغط هنا لكتابة اسمك</h3><p id="dJob">المهنة • القسم</p></div>
+  </div>
+  <button type="button" class="edit-btn">⚙️</button>
+</div>
+
+<div class="cal">
+  <div class="cal-h"><span id="mTxt"></span><span id="dTxt"></span></div>
+  <div class="w-days" id="wDays"></div>
+</div>
+
+<div class="card">
+  <div class="s-title">شيفت صباحي (6:00 صباحاً - 3:00 مساءً) + (أوفر)</div>
+  <div class="timer">
+    <div class="t-box" id="tH">00</div><div class="t-box" id="tM">00</div><div class="t-box" id="tS">00</div><b>HRS</b>
+  </div>
+  <div class="p-bar"><div class="p-fill" id="pFill"></div></div>
+  <div class="meta">
+    <div>🕒 <span id="inTxt">جاهز لتسجيل الحضور</span></div>
+    <div>📍 Zone 1 - ترسانة جنوب البحر الأحمر</div>
+  </div>
+  <video id="video" autoplay playsinline muted></video>
+  <img id="preview" alt="صورة">
+  <button type="button" class="cam-btn" id="camBtn" onclick="cam()">📸 تشغيل الكاميرا لالتقاط السيلفي</button>
+  <div class="row">
+    <button type="button" class="btn btn-in" id="bIn" onclick="send('حضور')">تسجيل حضور</button>
+    <button type="button" class="btn btn-out" id="bOut" onclick="send('انصراف')">تسجيل انصراف</button>
+  </div>
+  <div id="msg"></div>
+</div>
+
+<div class="modal" id="modal">
+  <div class="m-box">
+    <h4 style="margin-top:0">بيانات العامل</h4>
+    <input type="text" id="iName" placeholder="الاسم ثلاثي...">
+    <input type="text" id="iJob" placeholder="المهنة (مثال: لحام CO2)">
+    <input type="text" id="iDept" placeholder="القسم (مثال: بناء السفن)">
+    <input type="text" id="iId" placeholder="رقم العامل">
+    <input type="password" id="iPin" placeholder="الرقم السري (4 أرقام)" inputmode="numeric" maxlength="4">
+    <button type="button" class="s-btn" onclick="saveP()">حفظ البيانات</button>
+  </div>
+</div>
+
+<div class="nav">
+  <div class="n-item active">👤<br>Schedule</div>
+  <div class="n-item" onclick="logs()">📊<br>سجل بصماتي</div>
+  <div class="n-item" onclick="openM()">⚙️<br>بياناتي</div>
+</div>
+
+<script>
+var API_URL="https://script.google.com/macros/s/AKfycby8oWt0sfv7G4fnkOnyWX03TJ1gHkfaLNw4NJJHPkvWrSmE7Ot5W9ayyiTRTj7Lz7Vs0Q/exec";
+var LAT=26.684146,LON=33.933166,MAX=250,img=null,camOn=false,tmr=null,sName="",sJob="",sDept="",sId="",sPin="";
+
+function g(k){try{return localStorage.getItem(k)}catch(e){return null}}
+function s(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+function norm(t){return t.trim().replace(/[أإآ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي').replace(/\s+/g,' ')}
+
+function init(){
+  var n=new Date(),ms=["January","February","March","April","May","June","July","August","September","October","November","December"],ds=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+  document.getElementById('mTxt').innerText=ms[n.getMonth()]+" "+n.getFullYear();
+  document.getElementById('dTxt').innerText="("+ds[n.getDay()]+")";
+  var h="";
+  for(var i=-3;i<=3;i++){var d=new Date();d.setDate(n.getDate()+i);h+='<div class="d-box'+(i===0?' active':'')+'">'+d.getDate()+'</div>'}
+  document.getElementById('wDays').innerHTML=h;
+  sName=g('wn')||"";sJob=g('wj')||"";sDept=g('wd')||"";sId=g('wi')||"";sPin=g('wp')||"";
+  if(sName)upd();else openM();
+}
+
+function upd(){
+  document.getElementById('dName').innerText=sName;
+  document.getElementById('dJob').innerText=(sJob||"فني")+" • "+(sDept||"ترسانة سفاجا");
+  document.getElementById('av').innerText=sName.charAt(0);
+}
+function openM(){document.getElementById('iName').value=sName;document.getElementById('iJob').value=sJob;document.getElementById('iDept').value=sDept;document.getElementById('iId').value=sId;document.getElementById('iPin').value=sPin;document.getElementById('modal').style.display='flex'}
+function saveP(){
+  var n=norm(document.getElementById('iName').value),j=document.getElementById('iJob').value.trim(),d=document.getElementById('iDept').value.trim();
+  var id=document.getElementById('iId').value.trim(),pin=document.getElementById('iPin').value.trim();
+  if(n.split(" ").length<3){alert("اكتب الاسم ثلاثياً");return}
+  if(!id){alert("اكتب رقم العامل");return}
+  if(!/^\d{4}$/.test(pin)){alert("الرقم السري 4 أرقام");return}
+  sName=n;sJob=j;sDept=d;sId=id;sPin=pin;s('wn',n);s('wj',j);s('wd',d);s('wi',id);s('wp',pin);
+  document.getElementById('modal').style.display='none';upd();
+}
+function logs(){
+  if(!sId||!sPin){openM();return}
+  var n=new Date(),mo=n.getFullYear()+"-"+("0"+(n.getMonth()+1)).slice(-2);
+  fetch(API_URL+"?action=history&id="+encodeURIComponent(sId)+"&pin="+encodeURIComponent(sPin)+"&month="+mo).then(function(r){return r.json()}).then(function(r){
+    if(!r.ok){alert("تعذر التحميل: "+r.error);return}
+    var t="سجل شهر "+r.month+"\nأيام الحضور: "+r.daysAttended+"\nإجمالي الساعات: "+r.totalHours+"\n\n";
+    (r.days||[]).forEach(function(d){t+=d.date+"  دخول "+(d["in"]||"-")+"  خروج "+(d.out||"-")+"  ساعات "+(d.hours===null?"-":d.hours)+"\n"});
+    alert(t);
+  }).catch(function(){alert("فشل الاتصال")});
+}
+
+function cam(){
+  var v=document.getElementById('video'),b=document.getElementById('camBtn'),p=document.getElementById('preview');
+  if(!camOn){
+    navigator.mediaDevices.getUserMedia({video:{facingMode:"user"},audio:false}).then(function(st){
+      v.srcObject=st;v.play();camOn=true;p.style.display='none';v.style.display='block';b.innerText="📷 اضغط لالتقاط الصورة";
+    }).catch(function(){document.getElementById('msg').innerText="⚠️ فعّل إذن الكاميرا"});
+  }else{
+    var c=document.createElement('canvas');c.width=300;c.height=300;c.getContext('2d').drawImage(v,0,0,300,300);
+    img=c.toDataURL('image/jpeg',0.7);p.src=img;p.style.display='block';v.style.display='none';
+    v.srcObject.getTracks().forEach(function(t){t.stop()});camOn=false;b.innerText="🔄 إعادة التقاط الصورة";
+    document.getElementById('msg').innerText="✅ الصورة جاهزة";
+  }
+}
+
+
+function startTimer(st){
+  clearInterval(tmr);
+  document.getElementById('inTxt').innerText=g('stTxt')||"الحضور مسجل";
+  function tick(){
+    var df=Math.max(0,Math.floor((Date.now()-st)/1000));
+    document.getElementById('tH').innerText=String(Math.floor(df/3600)).padStart(2,'0');
+    document.getElementById('tM').innerText=String(Math.floor((df%3600)/60)).padStart(2,'0');
+    document.getElementById('tS').innerText=String(df%60).padStart(2,'0');
+    document.getElementById('pFill').style.width=Math.min(df/32400*100,100)+'%';
+  }
+  tick();tmr=setInterval(tick,1000);
+}
+function stopTimer(){
+  clearInterval(tmr);s('st','');s('stTxt','');
+  document.getElementById('tH').innerText='00';document.getElementById('tM').innerText='00';document.getElementById('tS').innerText='00';
+  document.getElementById('pFill').style.width='0%';
+  document.getElementById('inTxt').innerText='جاهز لتسجيل الحضور';
+}
+
+function dist(a1,o1,a2,o2){
+  var R=6371e3,p1=a1*Math.PI/180,p2=a2*Math.PI/180,dp=(a2-a1)*Math.PI/180,dl=(o2-o1)*Math.PI/180;
+  var a=Math.sin(dp/2)*Math.sin(dp/2)+Math.cos(p1)*Math.cos(p2)*Math.sin(dl/2)*Math.sin(dl/2);
+  return R*(2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a)));
+}
+
+function send(type){
+  var m=document.getElementById('msg'),b1=document.getElementById('bIn'),b2=document.getElementById('bOut');
+  if(!sName||!sId||!sPin){openM();return}
+  if(!img){m.innerText="⚠️ التقط صورة سيلفي أولاً";return}
+  b1.disabled=b2.disabled=true;m.innerText="⏳ جاري التحقق من الموقع...";
+  var lbl=sJob?sName+" ("+sJob+")":sName;
+  navigator.geolocation.getCurrentPosition(function(pos){
+    var d=Math.round(dist(LAT,LON,pos.coords.latitude,pos.coords.longitude)),t=new Date().toLocaleString('ar-EG');
+    if(d<=MAX){
+      fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({workerId:sId,pin:sPin,name:lbl,type:type,time:t,distance:d,image:img})}).then(function(r){return r.json()}).then(function(res){
+        if(!res.ok){
+          m.innerText=(res.error==='wrong_id_or_pin')?"❌ رقم العامل أو الرقم السري غلط":"❌ اترفض: "+res.error;
+          b1.disabled=b2.disabled=false;return;
+        }
+        m.innerHTML="✅ تم تسجيل <b>"+type+"</b> ("+d+" متر)";
+        img=null;document.getElementById('preview').style.display='none';document.getElementById('camBtn').innerText="📸 تشغيل الكاميرا";
+        if(type==='حضور'){
+          var st0=Date.now();s('st',String(st0));s('stTxt',"الحضور: "+new Date().toLocaleTimeString('ar-EG'));
+          startTimer(st0);
+        }else{
+          stopTimer();
+        }
+        b1.disabled=b2.disabled=false;
+      }).catch(function(){
+        m.innerText="❌ فشل الإرسال، جرّب تاني";
+        b1.disabled=b2.disabled=false;
+      });
+    }else{
+      m.innerText="❌ أنت بعيد عن موقع الشغل ("+d+" متر)";
+      b1.disabled=b2.disabled=false;
+    }
+  },function(){
+    m.innerText="⚠️ فعّل إذن الموقع";
+    b1.disabled=b2.disabled=false;
+  },{enableHighAccuracy:true,timeout:15000});
+}
+
+init();
+if(g('st')){startTimer(parseInt(g('st'),10))}
+</script>
+</body>
+</html>
